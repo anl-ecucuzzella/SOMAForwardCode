@@ -69,13 +69,13 @@ def find_max_depth_index(x, y, data):
 #open a hdf5 file to write the results to 
 f = h5py.File("thedataset2.hdf5", "w")
 for forward in range(100):
-	#os.chdir(f"output_{forward}")
-	#os.system("cp ../output_0/scrip.nc scrip.nc")
-	#os.system("cp ../output_0/grd.nc grd.nc")
-    #need to regrid each of the .nc files for a forward based on the 
-    #scrip.nc and grd.nc files 
-	#os.system("ncremap -P mpas -s scrip.nc -g grd.nc output.0003-01-01_00.00.00.nc output.0003-01-01_00.00.00-rgr.nc")
-	#os.chdir("..")
+	os.chdir(f"output_{forward}")
+	os.system("cp ../output_0/scrip.nc scrip.nc")
+	os.system("cp ../output_0/grd.nc grd.nc")
+    need to regrid each of the .nc files for a forward based on the 
+    scrip.nc and grd.nc files 
+	os.system("ncremap -P mpas -s scrip.nc -g grd.nc output.0003-01-01_00.00.00.nc output.0003-01-01_00.00.00-rgr.nc")
+	os.chdir("..")
 	#currently just getting data for the first month for Yixuan's training 
     data = netCDF4.Dataset(f"output_{forward}/output.0003-01-01_00.00.00-rgr.nc")
 	list_of_variables = get_variables(data)

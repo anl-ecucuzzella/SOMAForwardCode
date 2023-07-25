@@ -1,4 +1,4 @@
-🎬 To get start with SOMA, clone the repository found here: git@github.com:anl-ecucuzzella/compass.git. Follow provided instructions to set up perturbed parameter ensemble experiments.
+🎬 To get started with SOMA, clone the repository found here: git@github.com:anl-ecucuzzella/compass.git. Follow provided instructions to set up perturbed parameter ensemble experiments.
 
 🗂️ There are a few initial errors from the compass repository that might lead to errors if job scripts are submitted with the forwards configured as-is. These include:
 1) clobber_mode in all streams.ocean files is set to 'overwrite' instead of 'truncate,' resulting in errors when restarting or rerunning experiments.

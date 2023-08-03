@@ -1,7 +1,7 @@
-import numpy as np 
+import numpy as np
 import netCDF4
-import h5py 
-import os 
+import h5py
+import os
 
 #NAME: get_variables
 #PURPOSE: to get the variables that are spatially and temporally varying
@@ -29,7 +29,7 @@ def get_GM(forward):
 	gm = float(namelist_lines[81][31:-1])
 	namelist.close()
 	os.chdir("..")
-	return gm 
+	return gm
 
 #NAME: populate_empty_array
 #PURPOSE: to populate the array with the values for all of the different 
@@ -60,38 +60,33 @@ def populate_empty_array(list_of_variables, data, gm):
 def find_max_depth_index(x, y, data):
 	thickness = list(data.variables["refBottomDepth"][:])
 	bottom = list(data.variables["bottomDepth"][:])[x][y]
-	thickness_stacked = [sum(thickness[0:i+1]) for i in range(len(thickness))]
-	for t in range(len(thickness_stacked)):
-		if bottom < thickness_stacked[t]:
-			return t - 1
-	return len(thickness_stacked) - 1 
+	for t in range(len(thickness)):
+		if bottom < thickness[t]:
+			return t 
+	return len(thickness) - 1
 
 #open a hdf5 file to write the results to 
-f = h5py.File("thedataset2.hdf5", "w")
+f = h5py.File("thedataset4.hdf5", "w")
 for forward in range(100):
-	os.chdir(f"output_{forward}")
-	os.system("cp ../output_0/scrip.nc scrip.nc")
-	os.system("cp ../output_0/grd.nc grd.nc")
-    need to regrid each of the .nc files for a forward based on the 
-    scrip.nc and grd.nc files 
-	os.system("ncremap -P mpas -s scrip.nc -g grd.nc output.0003-01-01_00.00.00.nc output.0003-01-01_00.00.00-rgr.nc")
-	os.chdir("..")
-	#currently just getting data for the first month for Yixuan's training 
+    #os.chdir(f"output_{forward}")
+    #os.system("cp ../output_0/scrip.nc scrip.nc")
+    #os.system("cp ../output_0/grd.nc grd.nc")
+    #need to regrid each of the .nc files for a forward based on the 
+    #scrip.nc and grd.nc files 
+    #os.system("ncremap -P mpas -s scrip.nc -g grd.nc output.0003-01-01_00.00.00.nc output.0003-01-01_00.00.00-rgr.nc")
+    #os.chdir("..")
+    #currently just getting data for the first month for Yixuan's training 
     data = netCDF4.Dataset(f"output_{forward}/output.0003-01-01_00.00.00-rgr.nc")
-	list_of_variables = get_variables(data)
-	#grp = f.create_group("forward_" + str(forward))
-	gm = get_GM(forward)
-	result = populate_empty_array(list_of_variables, data, gm)
-	for x in range(100):
-		for y in range(100):
-			t = find_max_depth_index(x, y, data)
-            #if the index is 59, that means the vertical layers go 
-            #all the way to the bottom of the vertical grid, so there
-            #is no need to set any values to 0
-			if t != 59:
-				for t_ in range(t+1, 60):
-					result[:,t_,x,y] = np.zeros(17)
+    list_of_variables = get_variables(data)
+    #grp = f.create_group("forward_" + str(forward))
+    gm = get_GM(forward)
+    result = populate_empty_array(list_of_variables, data, gm)
+    for x in range(100):
+    	for y in range(100):
+    		t = find_max_depth_index(x, y, data)
+    		if t != 59 and t != 60:
+    			for t_ in range(t+1, 60):
+    				result[:,t_,x,y] = np.array([np.nan, np.nan, np.nan, np.nan, np.nan, np.nan, np.nan, np.nan, np.nan, np.nan, np.nan, np.nan, np.nan, np.nan, np.nan, np.nan, np.nan])
     #create a dataset for each of the forwards 
-	dset = f.create_dataset(f"forward_{forward}", result.shape, dtype = 'f', data = result)
-
+    dset = f.create_dataset(f"forward_{forward}", result.shape, dtype = 'f', data = result)
 

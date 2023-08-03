@@ -86,7 +86,7 @@ for forward in range(100):
     		t = find_max_depth_index(x, y, data)
     		if t != 59 and t != 60:
     			for t_ in range(t+1, 60):
-    				result[:,t_,x,y] = np.zeroes(17)
+    				result[:,t_,x,y] = np.zeros(17)
     #create a dataset for each of the forwards 
     dset = f.create_dataset(f"forward_{forward}", result.shape, dtype = 'f', data = result)
 
